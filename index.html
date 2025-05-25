@@ -40,12 +40,16 @@
       margin-top: 0;
       color: #34495e;
     }
-    #searchBar {
+    #searchContainer {
+      display: flex;
+      gap: 10px;
       margin-bottom: 20px;
+    }
+    #searchBar {
+      flex: 1;
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      width: 100%;
       box-sizing: border-box;
     }
     button {
@@ -72,7 +76,10 @@
 <body>
   <h1>Student Health Data Entry</h1>
 
-  <input id="searchBar" type="text" placeholder="Search by student name..." />
+  <div id="searchContainer">
+    <input id="searchBar" type="text" placeholder="Search by student name..." />
+    <button type="button" id="searchBtn">Search</button>
+  </div>
 
   <form id="healthForm">
     <label>Name*</label>
@@ -131,6 +138,7 @@
 
     const form = document.getElementById('healthForm');
     const searchBar = document.getElementById('searchBar');
+    const searchBtn = document.getElementById('searchBtn');
     const message = document.getElementById('message');
 
     let allData = [];
@@ -156,7 +164,7 @@
       form.reset();
     }
 
-    searchBar.addEventListener("input", () => {
+    function handleSearch() {
       const query = searchBar.value.trim().toLowerCase();
       if (query.length === 0) return;
 
@@ -164,7 +172,10 @@
       if (result) {
         fillForm(result);
       }
-    });
+    }
+
+    searchBar.addEventListener("input", handleSearch);
+    searchBtn.addEventListener("click", handleSearch);
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
