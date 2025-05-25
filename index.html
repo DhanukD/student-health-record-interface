@@ -1,100 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Code on Canvas</title>
+<style>
+  body {
+    margin: 0; 
+    background: #121212; 
+    color: #e0e0e0; 
+    font-family: monospace;
+    overflow: hidden;
+  }
+  #container {
+    width: 100vw; 
+    height: 100vh; 
+    overflow: auto;
+    background: #121212;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  canvas {
+    background: #263238;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+  <canvas id="codeCanvas"></canvas>
+</div>
+
+<script>
+  const code = `<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Student Health Data Entry</title>
   <style>
+    /* Dark calm theme */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #1e1e2f;
-      color: #f0f0f0;
+      background-color: #121212;
+      color: #e0e0e0;
       max-width: 800px;
-      margin: auto;
-      padding: 30px;
+      margin: 40px auto;
+      padding: 20px 30px;
+      box-sizing: border-box;
+      user-select: none;
     }
     h1 {
       text-align: center;
-      color: #00d8a7;
+      font-weight: 700;
+      color: #80cbc4;
+      margin-bottom: 30px;
+      user-select: text;
     }
     label {
-      display:block;
-      margin:10px 0 4px;
+      display: block;
+      margin: 14px 0 6px 0;
       font-weight: 600;
+      color: #b0bec5;
     }
     input, select {
       width: 100%;
-      padding: 8px;
+      padding: 10px 12px;
       border-radius: 6px;
-      border: 1px solid #444;
-      background-color: #2a2a3d;
-      color: #f0f0f0;
+      border: 1.5px solid #37474f;
+      background-color: #263238;
+      color: #eceff1;
+      font-size: 15px;
       box-sizing: border-box;
+      transition: border-color 0.3s ease;
     }
-    .section, .fat-section {
-      margin: 25px 0;
-      background: #2a2a3d;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-    .fat-section h3 {
-      margin-top: 0;
-      color: #00d8a7;
-    }
-    #searchBar {
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background-color: #2a2a3d;
-      color: #f0f0f0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #00d8a7;
-      border: none;
-      border-radius: 6px;
-      color: #1e1e2f;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #00c496;
-    }
-    #message {
-      margin-top: 15px;
-      color: #00ffcc;
-      font-weight: 600;
-      text-align: center;
+    input:focus, select:focus {
+      outline: none;
+      border-color: #80cbc4;
+      background-color: #37474f;
+      color: #ffffff;
     }
     #searchWrapper {
       display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    #searchBar {
+      flex-grow: 1;
+      font-size: 16px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      border: 1.5px solid #37474f;
+      background-color: #263238;
+      color: #eceff1;
+    }
+    #searchButton {
+      background-color: #80cbc4;
+      border: none;
+      color: #121212;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 12px 25px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    #searchButton:hover {
+      background-color: #4db6ac;
+    }
+    button[type="submit"] {
+      margin-top: 25px;
+      width: 100%;
+      background-color: #80cbc4;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 18px;
+      color: #121212;
+      padding: 14px 0;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button[type="submit"]:hover {
+      background-color: #4db6ac;
+    }
+    .section, .fat-section {
+      margin-top: 20px;
+      padding: 18px 22px;
+      border-radius: 12px;
+      background-color: #263238;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+    }
+    .fat-section h3 {
+      margin-top: 0;
+      color: #80cbc4;
+      user-select: text;
+    }
+    #message {
+      margin-top: 18px;
+      text-align: center;
+      font-weight: 700;
+      color: #a5d6a7;
+      min-height: 24px;
+      user-select: none;
     }
   </style>
 </head>
 <body>
+
   <h1>Student Health Data Entry</h1>
 
   <div id="searchWrapper">
-    <input id="searchBar" type="text" placeholder="Search by student name..." />
+    <input id="searchBar" type="text" placeholder="Search by student name..." autocomplete="off" />
     <button id="searchButton" type="button">Search</button>
   </div>
 
-  <form id="healthForm">
-    <label>Name*</label>
-    <input name="Name" required />
+  <form id="healthForm" autocomplete="off">
+    <label for="Name">Name*</label>
+    <input name="Name" id="Name" required autocomplete="off" />
 
     <div class="section">
-      <label>Age</label><input name="Age" type="number"/>
-      <label>Blood Group</label>
-      <select name="Blood Group">
+      <label for="Age">Age</label><input name="Age" id="Age" type="number" min="0" />
+      
+      <label for="Blood Group">Blood Group</label>
+      <select name="Blood Group" id="BloodGroup">
         <option value="">Select</option>
         <option value="A+">A+</option>
         <option value="A-">A-</option>
@@ -105,32 +178,34 @@
         <option value="O+">O+</option>
         <option value="O-">O-</option>
       </select>
-      <label>FBS (Glucometer)</label><input name="FBS (Glucometer)"/>
-      <label>FBS (Glucose Kit)</label><input name="FBS (Glucose Kit)"/>
-      <label>Weight</label><input name="Weight"/>
-      <label>Height</label><input name="Height"/>
-      <label>Waist Circumference</label><input name="Waist Circumference"/>
-      <label>Hip Circumference</label><input name="Hip Circumference"/>
-      <label>Mid Upper Arm Circumference</label><input name="Mid Upper Arm Circumference"/>
-      <label>Mid Upper Arm Length</label><input name="Mid Upper Arm Length"/>
-      <label>Mid Upper Arm Skin Fold Thickness</label><input name="Mid Upper Arm Skin Fold Thickness"/>
-      <label>Body Fat</label><input name="Body Fat"/>
+      
+      <label for="FBS (Glucometer)">FBS level (Glucometer)</label><input name="FBS (Glucometer)" id="FBSGlucometer" />
+      <label for="FBS (Glucose Kit)">FBS level (Glucose oxidase kit)</label><input name="FBS (Glucose Kit)" id="FBSGlucoseKit" />
+      
+      <label for="Weight">Weight</label><input name="Weight" id="Weight" />
+      <label for="Height">Height</label><input name="Height" />
+      <label for="Waist Circumference">Waist circumference</label><input name="Waist Circumference" />
+      <label for="Hip Circumference">Hip circumference</label><input name="Hip Circumference" />
+      <label for="Mid Upper Arm Circumference">Mid upper arm circumference</label><input name="Mid Upper Arm Circumference" />
+      <label for="Mid Upper Arm Length">Mid upper arm length</label><input name="Mid Upper Arm Length" />
+      <label for="Mid Upper Arm Skin Fold Thickness">Mid upper arm skin fold thickness</label><input name="Mid Upper Arm Skin Fold Thickness" />
+      <label for="Body Fat">Body fat</label><input name="Body Fat" />
     </div>
 
     <div class="fat-section">
       <h3>Fat Analysis</h3>
-      <label>Visceral Fat</label><input name="Visceral Fat"/>
-      <label>Resting Metabolism</label><input name="Resting Metabolism"/>
-      <label>BMI</label><input name="BMI"/>
-      <label>Body Age</label><input name="Body Age"/>
-      <label>Subcutaneous Fat (Whole)</label><input name="Subcutaneous Fat (Whole)"/>
-      <label>Subcutaneous Fat (Trunk)</label><input name="Subcutaneous Fat (Trunk)"/>
-      <label>Subcutaneous Fat (Arm)</label><input name="Subcutaneous Fat (Arm)"/>
-      <label>Subcutaneous Fat (Leg)</label><input name="Subcutaneous Fat (Leg)"/>
-      <label>Skeletal Muscle (Whole)</label><input name="Skeletal Muscle (Whole)"/>
-      <label>Skeletal Muscle (Trunk)</label><input name="Skeletal Muscle (Trunk)"/>
-      <label>Skeletal Muscle (Arm)</label><input name="Skeletal Muscle (Arm)"/>
-      <label>Skeletal Muscle (Leg)</label><input name="Skeletal Muscle (Leg)"/>
+      <label for="Visceral Fat">Visceral fat</label><input name="Visceral Fat" />
+      <label for="Resting Metabolism">Resting Metabolism</label><input name="Resting Metabolism" />
+      <label for="BMI">BMI</label><input name="BMI" />
+      <label for="Body Age">Body age</label><input name="Body Age" />
+      <label for="Subcutaneous Fat (Whole)">Subcutaneous fat whole body</label><input name="Subcutaneous Fat (Whole)" />
+      <label for="Subcutaneous Fat (Trunk)">Subcutaneous fat trunk</label><input name="Subcutaneous Fat (Trunk)" />
+      <label for="Subcutaneous Fat (Arm)">Subcutaneous fat Arm</label><input name="Subcutaneous Fat (Arm)" />
+      <label for="Subcutaneous Fat (Leg)">Subcutaneous fat leg</label><input name="Subcutaneous Fat (Leg)" />
+      <label for="Skeletal Muscle (Whole)">Skeletal muscle fat whole body</label><input name="Skeletal Muscle (Whole)" />
+      <label for="Skeletal Muscle (Trunk)">Skeletal muscle trunk</label><input name="Skeletal Muscle (Trunk)" />
+      <label for="Skeletal Muscle (Arm)">Skeletal muscle arm</label><input name="Skeletal Muscle (Arm)" />
+      <label for="Skeletal Muscle (Leg)">Skeletal muscle leg</label><input name="Skeletal Muscle (Leg)" />
     </div>
 
     <button type="submit">Save Record</button>
@@ -149,9 +224,14 @@
     let currentEditingName = '';
 
     async function fetchData() {
-      const res = await fetch(scriptURL);
-      const json = await res.json();
-      allData = json;
+      try {
+        const res = await fetch(scriptURL);
+        if (!res.ok) throw new Error('Failed to fetch data');
+        allData = await res.json();
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        allData = [];
+      }
     }
 
     function fillForm(data) {
@@ -172,45 +252,109 @@
 
     function searchStudent() {
       const query = searchBar.value.trim().toLowerCase();
-      if (query.length === 0) return;
-
+      if (query.length === 0) {
+        clearForm();
+        return;
+      }
       const result = allData.find(item => item.Name && item.Name.toLowerCase() === query);
       if (result) {
         currentEditingName = result.Name;
         fillForm(result);
+        message.textContent = \`Record found: Editing "\${result.Name}"\`;
+      } else {
+        clearForm();
+        message.textContent = \`No record found for "\${searchBar.value}"\`;
       }
     }
 
-    searchBar.addEventListener("input", searchStudent);
     searchButton.addEventListener("click", searchStudent);
+    searchBar.addEventListener("keydown", e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchStudent();
+      }
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = {};
-      new FormData(form).forEach((val, key) => formData[key] = val);
+      new FormData(form).forEach((val, key) => formData[key] = val.trim());
+
+      if (!formData.Name) {
+        message.textContent = "Name is required!";
+        return;
+      }
 
       if (currentEditingName) {
         formData.__editName = currentEditingName;
       }
 
-      const res = await fetch(scriptURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const txt = await res.text();
-      message.textContent = "Record saved successfully!";
-      setTimeout(() => message.textContent = '', 3000);
-
-      clearForm();
-      searchBar.value = '';
-      await fetchData();
+      try {
+        const res = await fetch(scriptURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+        if (res.ok) {
+          message.textContent = 'Record saved successfully!';
+          await fetchData();
+          clearForm();
+        } else {
+          message.textContent = 'Failed to save the record.';
+        }
+      } catch (err) {
+        message.textContent = 'Error while saving: ' + err.message;
+      }
     });
 
     fetchData();
   </script>
+
+</body>
+</html>`;
+
+  const canvas = document.getElementById('codeCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const lineHeight = 18;
+  const fontSize = 14;
+  const fontFamily = 'monospace';
+  const lineSpacing = 4;
+  const padding = 10;
+  const maxWidth = 1000; // max canvas width to avoid super wide
+
+  // Split code into lines
+  const lines = code.split('\n');
+
+  // Set canvas width and height based on longest line and number of lines
+  ctx.font = fontSize + 'px ' + fontFamily;
+  const maxLineWidth = Math.min(
+    Math.max(...lines.map(line => ctx.measureText(line).width)) + padding * 2,
+    maxWidth
+  );
+  const canvasWidth = maxLineWidth;
+  const canvasHeight = (lineHeight + lineSpacing) * lines.length + padding * 2;
+
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+
+  // Background
+  ctx.fillStyle = '#263238';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw each line
+  ctx.fillStyle = '#e0e0e0';
+  ctx.font = fontSize + 'px ' + fontFamily;
+  ctx.textBaseline = 'top';
+
+  lines.forEach((line, i) => {
+    ctx.fillText(line, padding, padding + i * (lineHeight + lineSpacing));
+  });
+
+  // Optional: add a subtle grid or line markers if you want later
+
+</script>
 </body>
 </html>
