@@ -1,1 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Health Data Entry</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+    label { display:block; margin:6px 0 2px; }
+    input, select { width: 100%; padding: 4px; }
+    .section { margin: 20px 0; }
+    .fat-section { border-top: 1px solid #ccc; margin-top: 20px; padding-top: 10px; }
+    #searchBar { margin-bottom: 20px; }
+    button { margin-top: 15px; padding: 8px 12px; }
+  </style>
+</head>
+<body>
+  <h1>Student Health Data Entry</h1>
+
+  <input id="searchBar" type="text" placeholder="Search by student name..." />
+
+  <form id="healthForm">
+    <label>Name*</label>
+    <input name="Name" required />
+    <label>Birthday*</label>
+    <input type="date" name="Birthday" required />
+
+    <div class="section">
+      <label>Age</label><input name="Age" type="number"/>
+      <label>Blood Group</label><input name="Blood Group"/>
+      <label>FBS (Glucometer)</label><input name="FBS (Glucometer)"/>
+      <label>FBS (Glucose Kit)</label><input name="FBS (Glucose Kit)"/>
+      <label>Weight</label><input name="Weight"/>
+      <label>Height</label><input name="Height"/>
+      <label>Waist Circumference</label><input name="Waist Circumference"/>
+      <label>Hip Circumference</label><input name="Hip Circumference"/>
+      <label>Mid Upper Arm Circumference</label><input name="Mid Upper Arm Circumference"/>
+      <label>Mid Upper Arm Length</label><input name="Mid Upper Arm Length"/>
+      <label>Mid Upper Arm Skin Fold Thickness</label><input name="Mid Upper Arm Skin Fold Thickness"/>
+      <label>Body Fat</label><input name="Body Fat"/>
+    </div>
+
+    <div class="fat-section">
+      <h3>Fat Analysis</h3>
+      <label>Visceral Fat</label><input name="Visceral Fat"/>
+      <label>Resting Metabolism</label><input name="Resting Metabolism"/>
+      <label>BMI</label><input name="BMI"/>
+      <label>Body Age</label><input name="Body Age"/>
+      <label>Subcutaneous Fat (Whole)</label><input name="Subcutaneous Fat (Whole)"/>
+      <label>Subcutaneous Fat (Trunk)</label><input name="Subcutaneous Fat (Trunk)"/>
+      <label>Subcutaneous Fat (Arm)</label><input name="Subcutaneous Fat (Arm)"/>
+      <label>Subcutaneous Fat (Leg)</label><input name="Subcutaneous Fat (Leg)"/>
+      <label>Skeletal Muscle (Whole)</label><input name="Skeletal Muscle (Whole)"/>
+      <label>Skeletal Muscle (Trunk)</label><input name="Skeletal Muscle (Trunk)"/>
+      <label>Skeletal Muscle (Arm)</label><input name="Skeletal Muscle (Arm)"/>
+      <label>Skeletal Muscle (Leg)</label><input name="Skeletal Muscle (Leg)"/>
+    </div>
+
+    <button type="submit">Save Record</button>
+  </form>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyCWDAH_lG5U3meUH-7mwlqCJWJZi_aQAdVzpFyG9a6JZ9XirsXBMxcNo19lgy1FdDJ/exec';
+
+    const form = document.getElementById('healthForm');
+    const searchBar = document.getElementById('searchBar');
+
+    // Load data once on startup
+    let allData = [];
+
+    async function fetchData() {
+      const res = await fetch(scriptURL);
+      const json = await res.json();
+      allData = json;
+    }
+
+    function fillForm(data) {
+      const fields = form.querySelectorAll("input");
+      fields.forEach(input => {
+        if (data[input.name] !== undefined) {
+          input.value = data[input.name];
+        } else {
+          input.value = '';
+        }
+      });
+    }
+
+    // Search bar functionality
+    searchBar.addEventListener("input", () => {
+      const query = searchBar.value.trim().toLowerCase();
+      if (query.length === 0) return;
+
+      const result = allData.find(item => item.Name && item.Name.toLowerCase().includes(query));
+      if (result) {
+        fillForm(result);
+      }
+    });
+
+    // Submit form data to Google Sheet
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = {};
+      new FormData(form).forEach((val, key) => formData[key] = val);
+
+      const res = await fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(formData)
+      });
+      const txt = await res.text();
+      alert(txt);
+      await fetchData(); // refresh data cache after save
+    });
+
+    fetchData();
+  </script>
+</body>
+</html>
 
