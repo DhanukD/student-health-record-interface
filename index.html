@@ -2,212 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Health Data Entry</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #1e1e2f;
-      color: #f0f0f0;
-      max-width: 800px;
-      margin: auto;
-      padding: 30px;
-    }
-    h1 {
-      text-align: center;
-      color: #00d8a7;
-    }
-    label {
-      display:block;
-      margin:10px 0 4px;
-      font-weight: 600;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background-color: #2a2a3d;
-      color: #f0f0f0;
-      box-sizing: border-box;
-    }
-    .section, .fat-section {
-      margin: 25px 0;
-      background: #2a2a3d;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-    .fat-section h3 {
-      margin-top: 0;
-      color: #00d8a7;
-    }
-    #searchBar {
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background-color: #2a2a3d;
-      color: #f0f0f0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #00d8a7;
-      border: none;
-      border-radius: 6px;
-      color: #1e1e2f;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #00c496;
-    }
-    #message {
-      margin-top: 15px;
-      color: #00ffcc;
-      font-weight: 600;
-      text-align: center;
-    }
-    #searchWrapper {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-  </style>
+  <script defer src="script.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-  <h1>Student Health Data Entry</h1>
+<body class="bg-gray-100 min-h-screen p-4">
+  <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-md p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
 
-  <div id="searchWrapper">
-    <input id="searchBar" type="text" placeholder="Search by student name..." />
-    <button id="searchButton" type="button">Search</button>
+    <!-- Left Column: Form -->
+    <div>
+      <h1 class="text-2xl font-bold mb-4">Student Health Data Entry</h1>
+
+      <div class="mb-4">
+        <label class="block text-gray-700">Search by Name</label>
+        <input type="text" id="searchName" class="w-full border p-2 rounded" placeholder="Enter name to search...">
+        <button type="button" id="searchBtn" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Search</button>
+      </div>
+
+      <form id="healthForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input type="text" name="Name" placeholder="Name *" required class="border p-2 rounded">
+          <input type="number" name="Age" placeholder="Age" class="border p-2 rounded">
+          <input type="text" name="Blood group" placeholder="Blood group" class="border p-2 rounded">
+          <input type="number" step="any" name="FBS level (glucometer)" placeholder="FBS (glucometer)" class="border p-2 rounded">
+          <input type="number" step="any" name="FBS level (glucose oxidase kit)" placeholder="FBS (oxidase kit)" class="border p-2 rounded">
+          <input type="number" step="any" name="Weight" placeholder="Weight" class="border p-2 rounded">
+          <input type="number" step="any" name="Height" placeholder="Height" class="border p-2 rounded">
+          <input type="number" step="any" name="Waist circumference" placeholder="Waist circumference" class="border p-2 rounded">
+          <input type="number" step="any" name="Hip circumference" placeholder="Hip circumference" class="border p-2 rounded">
+          <input type="number" step="any" name="Mid upper arm circumference" placeholder="Mid upper arm circumference" class="border p-2 rounded">
+          <input type="number" step="any" name="Mid upper arm length" placeholder="Mid upper arm length" class="border p-2 rounded">
+          <input type="number" step="any" name="Mid upper arm skin fold thikness" placeholder="Skin fold thickness" class="border p-2 rounded">
+          <input type="number" step="any" name="Body fat" placeholder="Body fat" class="border p-2 rounded">
+          <input type="number" step="any" name="Visceral fat" placeholder="Visceral fat" class="border p-2 rounded">
+          <input type="number" step="any" name="Resting Metabolism" placeholder="Resting Metabolism" class="border p-2 rounded">
+          <input type="number" step="any" name="BMI" placeholder="BMI" class="border p-2 rounded">
+          <input type="number" step="any" name="Body age" placeholder="Body age" class="border p-2 rounded">
+          <input type="number" step="any" name="Subcutaneous fat whole body" placeholder="SubQ fat (whole body)" class="border p-2 rounded">
+          <input type="number" step="any" name="Subcutaneous fat trunk" placeholder="SubQ fat (trunk)" class="border p-2 rounded">
+          <input type="number" step="any" name="Subcutaneous fat Arm" placeholder="SubQ fat (Arm)" class="border p-2 rounded">
+          <input type="number" step="any" name="Subcutaneous fat leg" placeholder="SubQ fat (leg)" class="border p-2 rounded">
+          <input type="number" step="any" name="Skeletal muscle fat whole body" placeholder="Muscle fat (whole)" class="border p-2 rounded">
+          <input type="number" step="any" name="Skeletal muscle trunk" placeholder="Muscle fat (trunk)" class="border p-2 rounded">
+          <input type="number" step="any" name="Skeletal muscle arm" placeholder="Muscle fat (arm)" class="border p-2 rounded">
+          <input type="number" step="any" name="Skeletal muscle leg" placeholder="Muscle fat (leg)" class="border p-2 rounded">
+        </div>
+
+        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Save</button>
+      </form>
+
+      <div id="message" class="mt-4 text-center text-green-600 font-bold"></div>
+    </div>
+
+    <!-- Right Column: Optional instructions or preview -->
+    <div class="hidden md:block">
+      <h2 class="text-xl font-semibold mb-2">Instructions</h2>
+      <ul class="list-disc list-inside text-gray-600 space-y-1">
+        <li>Fill out all necessary fields (only Name is required).</li>
+        <li>Click <strong>Search</strong> to load existing data by name.</li>
+        <li>Click <strong>Save</strong> to add or update a record.</li>
+        <li>Ensure you're connected to the internet for Google Sheets sync.</li>
+      </ul>
+    </div>
+
   </div>
 
-  <form id="healthForm">
-    <label>Name*</label>
-    <input name="Name" required />
-
-    <div class="section">
-      <label>Age</label><input name="Age" type="number"/>
-      <label>Blood Group</label>
-      <select name="Blood Group">
-        <option value="">Select</option>
-        <option value="A+">A+</option>
-        <option value="A-">A-</option>
-        <option value="B+">B+</option>
-        <option value="B-">B-</option>
-        <option value="AB+">AB+</option>
-        <option value="AB-">AB-</option>
-        <option value="O+">O+</option>
-        <option value="O-">O-</option>
-      </select>
-      <label>FBS (Glucometer)</label><input name="FBS (Glucometer)"/>
-      <label>FBS (Glucose Kit)</label><input name="FBS (Glucose Kit)"/>
-      <label>Weight</label><input name="Weight"/>
-      <label>Height</label><input name="Height"/>
-      <label>Waist Circumference</label><input name="Waist Circumference"/>
-      <label>Hip Circumference</label><input name="Hip Circumference"/>
-      <label>Mid Upper Arm Circumference</label><input name="Mid Upper Arm Circumference"/>
-      <label>Mid Upper Arm Length</label><input name="Mid Upper Arm Length"/>
-      <label>Mid Upper Arm Skin Fold Thickness</label><input name="Mid Upper Arm Skin Fold Thickness"/>
-      <label>Body Fat</label><input name="Body Fat"/>
-    </div>
-
-    <div class="fat-section">
-      <h3>Fat Analysis</h3>
-      <label>Visceral Fat</label><input name="Visceral Fat"/>
-      <label>Resting Metabolism</label><input name="Resting Metabolism"/>
-      <label>BMI</label><input name="BMI"/>
-      <label>Body Age</label><input name="Body Age"/>
-      <label>Subcutaneous Fat (Whole)</label><input name="Subcutaneous Fat (Whole)"/>
-      <label>Subcutaneous Fat (Trunk)</label><input name="Subcutaneous Fat (Trunk)"/>
-      <label>Subcutaneous Fat (Arm)</label><input name="Subcutaneous Fat (Arm)"/>
-      <label>Subcutaneous Fat (Leg)</label><input name="Subcutaneous Fat (Leg)"/>
-      <label>Skeletal Muscle (Whole)</label><input name="Skeletal Muscle (Whole)"/>
-      <label>Skeletal Muscle (Trunk)</label><input name="Skeletal Muscle (Trunk)"/>
-      <label>Skeletal Muscle (Arm)</label><input name="Skeletal Muscle (Arm)"/>
-      <label>Skeletal Muscle (Leg)</label><input name="Skeletal Muscle (Leg)"/>
-    </div>
-
-    <button type="submit">Save Record</button>
-    <div id="message"></div>
-  </form>
-
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwc-PDC_H8O3pU4P9soKBKmoGwMcXp0MrFH5FnYJre7p7KvIPLrUWcGH6SQHfbtUGs3/exec';
     const form = document.getElementById('healthForm');
-    const searchBar = document.getElementById('searchBar');
-    const searchButton = document.getElementById('searchButton');
     const message = document.getElementById('message');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInput = document.getElementById('searchName');
+    const endpoint = 'https://script.google.com/macros/s/AKfycbye076teJ79qCkBE-qm2GDlaSjwFcgrBWwhKIcPtPa8IZu3M2GTUjp2hr2gWA6ccVG_rg/exec';
 
-    let allData = [];
-    let currentEditingRowIndex = -1;
-
-    async function fetchData() {
-      const res = await fetch(scriptURL);
-      const json = await res.json();
-      allData = json;
-    }
-
-    function fillForm(data) {
-      const fields = form.querySelectorAll("input, select");
-      fields.forEach(input => {
-        if (data[input.name] !== undefined) {
-          input.value = data[input.name];
-        } else {
-          input.value = '';
-        }
-      });
-    }
-
-    function clearForm() {
-      form.reset();
-      currentEditingRowIndex = -1;
-    }
-
-    function searchStudent() {
-      const query = searchBar.value.trim().toLowerCase();
-      if (query.length === 0) return;
-
-      const result = allData.findIndex(item => item.Name && item.Name.toLowerCase() === query);
-      if (result !== -1) {
-        currentEditingRowIndex = result;
-        fillForm(allData[result]);
-      }
-    }
-
-    searchButton.addEventListener("click", searchStudent);
-
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const formData = {};
-      new FormData(form).forEach((val, key) => formData[key] = val);
-
-      if (currentEditingRowIndex !== -1) {
-        formData.__rowIndex = currentEditingRowIndex;
-      }
-
-      const res = await fetch(scriptURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => {
+        data[key] = value;
       });
 
-      message.textContent = "Record saved successfully!";
-      setTimeout(() => message.textContent = '', 3000);
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-      clearForm();
-      searchBar.value = '';
-      await fetchData();
+      const result = await response.json();
+      message.textContent = result.message || 'Data saved successfully';
     });
 
-    fetchData();
+    searchBtn.addEventListener('click', async () => {
+      const name = searchInput.value.trim();
+      if (!name) return;
+
+      const response = await fetch(`${endpoint}?name=${encodeURIComponent(name)}`);
+      const data = await response.json();
+
+      if (data.found) {
+        Object.keys(data.record).forEach(key => {
+          const field = form.querySelector(`[name="${key}"]`);
+          if (field) field.value = data.record[key];
+        });
+        message.textContent = 'Record loaded. You can update and save.';
+      } else {
+        message.textContent = 'No record found with that name.';
+      }
+    });
   </script>
 </body>
 </html>
