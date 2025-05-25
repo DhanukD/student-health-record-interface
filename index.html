@@ -2,114 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Health Data Entry</title>
-  <script defer src="script.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Health Data Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen p-4">
-  <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-md p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-4xl mx-auto p-4">
+    <h1 class="text-2xl font-bold text-center mb-6">Student Health Data Entry</h1>
+    <form id="healthForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-6 rounded-lg shadow">
+      <!-- Fields will be injected here -->
+    </form>
 
-    <!-- Left Column: Form -->
-    <div>
-      <h1 class="text-2xl font-bold mb-4">Student Health Data Entry</h1>
-
-      <div class="mb-4">
-        <label class="block text-gray-700">Search by Name</label>
-        <input type="text" id="searchName" class="w-full border p-2 rounded" placeholder="Enter name to search...">
-        <button type="button" id="searchBtn" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Search</button>
-      </div>
-
-      <form id="healthForm" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <input type="text" name="Name" placeholder="Name *" required class="border p-2 rounded">
-          <input type="number" name="Age" placeholder="Age" class="border p-2 rounded">
-          <input type="text" name="Blood group" placeholder="Blood group" class="border p-2 rounded">
-          <input type="number" step="any" name="FBS level (glucometer)" placeholder="FBS (glucometer)" class="border p-2 rounded">
-          <input type="number" step="any" name="FBS level (glucose oxidase kit)" placeholder="FBS (oxidase kit)" class="border p-2 rounded">
-          <input type="number" step="any" name="Weight" placeholder="Weight" class="border p-2 rounded">
-          <input type="number" step="any" name="Height" placeholder="Height" class="border p-2 rounded">
-          <input type="number" step="any" name="Waist circumference" placeholder="Waist circumference" class="border p-2 rounded">
-          <input type="number" step="any" name="Hip circumference" placeholder="Hip circumference" class="border p-2 rounded">
-          <input type="number" step="any" name="Mid upper arm circumference" placeholder="Mid upper arm circumference" class="border p-2 rounded">
-          <input type="number" step="any" name="Mid upper arm length" placeholder="Mid upper arm length" class="border p-2 rounded">
-          <input type="number" step="any" name="Mid upper arm skin fold thikness" placeholder="Skin fold thickness" class="border p-2 rounded">
-          <input type="number" step="any" name="Body fat" placeholder="Body fat" class="border p-2 rounded">
-          <input type="number" step="any" name="Visceral fat" placeholder="Visceral fat" class="border p-2 rounded">
-          <input type="number" step="any" name="Resting Metabolism" placeholder="Resting Metabolism" class="border p-2 rounded">
-          <input type="number" step="any" name="BMI" placeholder="BMI" class="border p-2 rounded">
-          <input type="number" step="any" name="Body age" placeholder="Body age" class="border p-2 rounded">
-          <input type="number" step="any" name="Subcutaneous fat whole body" placeholder="SubQ fat (whole body)" class="border p-2 rounded">
-          <input type="number" step="any" name="Subcutaneous fat trunk" placeholder="SubQ fat (trunk)" class="border p-2 rounded">
-          <input type="number" step="any" name="Subcutaneous fat Arm" placeholder="SubQ fat (Arm)" class="border p-2 rounded">
-          <input type="number" step="any" name="Subcutaneous fat leg" placeholder="SubQ fat (leg)" class="border p-2 rounded">
-          <input type="number" step="any" name="Skeletal muscle fat whole body" placeholder="Muscle fat (whole)" class="border p-2 rounded">
-          <input type="number" step="any" name="Skeletal muscle trunk" placeholder="Muscle fat (trunk)" class="border p-2 rounded">
-          <input type="number" step="any" name="Skeletal muscle arm" placeholder="Muscle fat (arm)" class="border p-2 rounded">
-          <input type="number" step="any" name="Skeletal muscle leg" placeholder="Muscle fat (leg)" class="border p-2 rounded">
-        </div>
-
-        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Save</button>
-      </form>
-
-      <div id="message" class="mt-4 text-center text-green-600 font-bold"></div>
+    <div class="flex flex-col sm:flex-row gap-2 mt-6 justify-center">
+      <button type="button" onclick="searchData()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Search</button>
+      <button type="button" onclick="submitData()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Save</button>
     </div>
 
-    <!-- Right Column: Optional instructions or preview -->
-    <div class="hidden md:block">
-      <h2 class="text-xl font-semibold mb-2">Instructions</h2>
-      <ul class="list-disc list-inside text-gray-600 space-y-1">
-        <li>Fill out all necessary fields (only Name is required).</li>
-        <li>Click <strong>Search</strong> to load existing data by name.</li>
-        <li>Click <strong>Save</strong> to add or update a record.</li>
-        <li>Ensure you're connected to the internet for Google Sheets sync.</li>
-      </ul>
-    </div>
-
+    <p id="message" class="text-center text-sm font-semibold mt-4 text-green-600"></p>
   </div>
 
   <script>
-    const form = document.getElementById('healthForm');
-    const message = document.getElementById('message');
-    const searchBtn = document.getElementById('searchBtn');
-    const searchInput = document.getElementById('searchName');
-    const endpoint = 'https://script.google.com/macros/s/AKfycbye076teJ79qCkBE-qm2GDlaSjwFcgrBWwhKIcPtPa8IZu3M2GTUjp2hr2gWA6ccVG_rg/exec';
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGkcaoSo8RhvFwyfml8ePyyXz8sBdhJu7RXXXZ5TlXYNIKK2Asyvk56Xlg4kdJl6OR/exec";
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
+    const fields = [
+      "Name", "Age", "Blood group", "FBS level (glucometer)", "FBS level (glucose oxidase kit)",
+      "Weight", "Height", "Waist circumference", "Hip circumference", "Mid upper arm circumference",
+      "Mid upper arm length", "Mid upper arm skin fold thikness", "Body fat", "Visceral fat",
+      "Resting Metabolism", "BMI", "Body age", "Subcutaneous fat whole body", "Subcutaneous fat trunk",
+      "Subcutaneous fat Arm", "Subcutaneous fat leg", "Skeletal muscle fat whole body",
+      "Skeletal muscle trunk", "Skeletal muscle arm", "Skeletal muscle leg"
+    ];
+
+    const form = document.getElementById("healthForm");
+    const message = document.getElementById("message");
+
+    // Build input fields and store references
+    const fieldRefs = {};
+    fields.forEach(field => {
+      const wrapper = document.createElement("div");
+      const label = document.createElement("label");
+      label.textContent = field;
+      label.className = "block text-sm font-medium text-gray-700";
+
+      const input = document.createElement("input");
+      input.placeholder = field;
+      input.name = field;
+      input.className = "border p-2 rounded w-full mt-1";
+      fieldRefs[field] = input;
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(input);
+      form.appendChild(wrapper);
+    });
+
+    function getFormData() {
       const data = {};
-      formData.forEach((value, key) => {
-        data[key] = value;
+      fields.forEach(field => {
+        data[field] = fieldRefs[field].value.trim();
       });
+      return data;
+    }
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+    function fillForm(data) {
+      fields.forEach(field => {
+        if (fieldRefs[field]) {
+          fieldRefs[field].value = data[field] || "";
+        }
       });
+    }
 
-      const result = await response.json();
-      message.textContent = result.message || 'Data saved successfully';
-    });
-
-    searchBtn.addEventListener('click', async () => {
-      const name = searchInput.value.trim();
-      if (!name) return;
-
-      const response = await fetch(`${endpoint}?name=${encodeURIComponent(name)}`);
-      const data = await response.json();
-
-      if (data.found) {
-        Object.keys(data.record).forEach(key => {
-          const field = form.querySelector(`[name="${key}"]`);
-          if (field) field.value = data.record[key];
-        });
-        message.textContent = 'Record loaded. You can update and save.';
-      } else {
-        message.textContent = 'No record found with that name.';
+    function submitData() {
+      const data = getFormData();
+      if (!data["Name"]) {
+        message.textContent = "Name is required.";
+        return;
       }
-    });
+      data["Timestamp"] = new Date().toISOString();
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => res.text())
+      .then(response => {
+        message.textContent = response === "Success" ? "Data saved successfully." : "Failed to save data.";
+      })
+      .catch(err => {
+        message.textContent = "Error: " + err.message;
+      });
+    }
+
+    function searchData() {
+      const name = fieldRefs["Name"].value.trim();
+      if (!name) {
+        message.textContent = "Name is required for search.";
+        return;
+      }
+
+      fetch(`${GOOGLE_SCRIPT_URL}?name=${encodeURIComponent(name)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Object.keys(data).length === 0) {
+            message.textContent = "Record not found.";
+          } else {
+            fillForm(data);
+            message.textContent = "Record loaded.";
+          }
+        })
+        .catch(err => {
+          message.textContent = "Error: " + err.message;
+        });
+    }
   </script>
 </body>
 </html>
