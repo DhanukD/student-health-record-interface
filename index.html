@@ -5,13 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Student Health Data Entry</title>
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; }
-    label { display:block; margin:6px 0 2px; }
-    input, select { width: 100%; padding: 4px; }
-    .section { margin: 20px 0; }
-    .fat-section { border-top: 1px solid #ccc; margin-top: 20px; padding-top: 10px; }
-    #searchBar { margin-bottom: 20px; }
-    button { margin-top: 15px; padding: 8px 12px; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      display:block;
+      margin:10px 0 4px;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    .section, .fat-section {
+      margin: 25px 0;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .fat-section h3 {
+      margin-top: 0;
+      color: #34495e;
+    }
+    #searchBar {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #2ecc71;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #27ae60;
+    }
+    #message {
+      margin-top: 15px;
+      color: #2c3e50;
+      font-weight: 600;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -27,7 +82,18 @@
 
     <div class="section">
       <label>Age</label><input name="Age" type="number"/>
-      <label>Blood Group</label><input name="Blood Group"/>
+      <label>Blood Group</label>
+      <select name="Blood Group">
+        <option value="">Select</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+      </select>
       <label>FBS (Glucometer)</label><input name="FBS (Glucometer)"/>
       <label>FBS (Glucose Kit)</label><input name="FBS (Glucose Kit)"/>
       <label>Weight</label><input name="Weight"/>
@@ -57,15 +123,16 @@
     </div>
 
     <button type="submit">Save Record</button>
+    <div id="message"></div>
   </form>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyCWDAH_lG5U3meUH-7mwlqCJWJZi_aQAdVzpFyG9a6JZ9XirsXBMxcNo19lgy1FdDJ/exec';
+    const scriptURL = 'YOUR_GOOGLE_SCRIPT_WEBAPP_URL_HERE';
 
     const form = document.getElementById('healthForm');
     const searchBar = document.getElementById('searchBar');
+    const message = document.getElementById('message');
 
-    // Load data once on startup
     let allData = [];
 
     async function fetchData() {
@@ -75,7 +142,7 @@
     }
 
     function fillForm(data) {
-      const fields = form.querySelectorAll("input");
+      const fields = form.querySelectorAll("input, select");
       fields.forEach(input => {
         if (data[input.name] !== undefined) {
           input.value = data[input.name];
@@ -85,7 +152,10 @@
       });
     }
 
-    // Search bar functionality
+    function clearForm() {
+      form.reset();
+    }
+
     searchBar.addEventListener("input", () => {
       const query = searchBar.value.trim().toLowerCase();
       if (query.length === 0) return;
@@ -96,7 +166,6 @@
       }
     });
 
-    // Submit form data to Google Sheet
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = {};
@@ -106,13 +175,17 @@
         method: 'POST',
         body: JSON.stringify(formData)
       });
+
       const txt = await res.text();
-      alert(txt);
-      await fetchData(); // refresh data cache after save
+      message.textContent = "Record saved successfully!";
+      setTimeout(() => message.textContent = '', 3000);
+
+      clearForm();
+      searchBar.value = '';
+      await fetchData();
     });
 
     fetchData();
   </script>
 </body>
 </html>
-
