@@ -7,15 +7,15 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f0f4f8;
-      color: #333;
+      background-color: #1e1e2f;
+      color: #f0f0f0;
       max-width: 800px;
       margin: auto;
       padding: 30px;
     }
     h1 {
       text-align: center;
-      color: #2c3e50;
+      color: #00d8a7;
     }
     label {
       display:block;
@@ -26,66 +26,70 @@
       width: 100%;
       padding: 8px;
       border-radius: 6px;
-      border: 1px solid #ccc;
+      border: 1px solid #444;
+      background-color: #2a2a3d;
+      color: #f0f0f0;
       box-sizing: border-box;
     }
     .section, .fat-section {
       margin: 25px 0;
-      background: #ffffff;
+      background: #2a2a3d;
       padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
     .fat-section h3 {
       margin-top: 0;
-      color: #34495e;
-    }
-    #searchContainer {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+      color: #00d8a7;
     }
     #searchBar {
-      flex: 1;
+      margin-bottom: 10px;
       padding: 10px;
       border-radius: 6px;
-      border: 1px solid #ccc;
+      border: 1px solid #444;
+      background-color: #2a2a3d;
+      color: #f0f0f0;
+      width: 100%;
       box-sizing: border-box;
     }
     button {
       margin-top: 20px;
       padding: 10px 20px;
-      background-color: #2ecc71;
+      background-color: #00d8a7;
       border: none;
       border-radius: 6px;
-      color: white;
+      color: #1e1e2f;
       font-size: 16px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #27ae60;
+      background-color: #00c496;
     }
     #message {
       margin-top: 15px;
-      color: #2c3e50;
+      color: #00ffcc;
       font-weight: 600;
       text-align: center;
+    }
+    #searchWrapper {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
   <h1>Student Health Data Entry</h1>
 
-  <div id="searchContainer">
+  <div id="searchWrapper">
     <input id="searchBar" type="text" placeholder="Search by student name..." />
-    <button type="button" id="searchBtn">Search</button>
+    <button id="searchButton" type="button">Search</button>
   </div>
 
   <form id="healthForm">
     <label>Name*</label>
     <input name="Name" required />
-    <label>Birthday*</label>
-    <input type="date" name="Birthday" required />
 
     <div class="section">
       <label>Age</label><input name="Age" type="number"/>
@@ -138,10 +142,11 @@
 
     const form = document.getElementById('healthForm');
     const searchBar = document.getElementById('searchBar');
-    const searchBtn = document.getElementById('searchBtn');
+    const searchButton = document.getElementById('searchButton');
     const message = document.getElementById('message');
 
     let allData = [];
+    let currentEditingIndex = -1;
 
     async function fetchData() {
       const res = await fetch(scriptURL);
@@ -162,25 +167,32 @@
 
     function clearForm() {
       form.reset();
+      currentEditingIndex = -1;
     }
 
-    function handleSearch() {
+    function searchStudent() {
       const query = searchBar.value.trim().toLowerCase();
       if (query.length === 0) return;
 
-      const result = allData.find(item => item.Name && item.Name.toLowerCase().includes(query));
-      if (result) {
-        fillForm(result);
+      const resultIndex = allData.findIndex(item => item.Name && item.Name.toLowerCase() === query);
+      if (resultIndex !== -1) {
+        currentEditingIndex = resultIndex;
+        fillForm(allData[resultIndex]);
       }
     }
 
-    searchBar.addEventListener("input", handleSearch);
-    searchBtn.addEventListener("click", handleSearch);
+    searchBar.addEventListener("input", searchStudent);
+    searchButton.addEventListener("click", searchStudent);
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = {};
       new FormData(form).forEach((val, key) => formData[key] = val);
+
+      // Attach row index for update logic
+      if (currentEditingIndex !== -1) {
+        formData.__rowIndex = currentEditingIndex + 2; // +2 because Google Sheets is 1-based and row 1 is header
+      }
 
       const res = await fetch(scriptURL, {
         method: 'POST',
