@@ -146,7 +146,7 @@
     const message = document.getElementById('message');
 
     let allData = [];
-    let currentEditingIndex = -1;
+    let currentEditingName = '';
 
     async function fetchData() {
       const res = await fetch(scriptURL);
@@ -167,17 +167,17 @@
 
     function clearForm() {
       form.reset();
-      currentEditingIndex = -1;
+      currentEditingName = '';
     }
 
     function searchStudent() {
       const query = searchBar.value.trim().toLowerCase();
       if (query.length === 0) return;
 
-      const resultIndex = allData.findIndex(item => item.Name && item.Name.toLowerCase() === query);
-      if (resultIndex !== -1) {
-        currentEditingIndex = resultIndex;
-        fillForm(allData[resultIndex]);
+      const result = allData.find(item => item.Name && item.Name.toLowerCase() === query);
+      if (result) {
+        currentEditingName = result.Name;
+        fillForm(result);
       }
     }
 
@@ -189,13 +189,15 @@
       const formData = {};
       new FormData(form).forEach((val, key) => formData[key] = val);
 
-      // Attach row index for update logic
-      if (currentEditingIndex !== -1) {
-        formData.__rowIndex = currentEditingIndex + 2; // +2 because Google Sheets is 1-based and row 1 is header
+      if (currentEditingName) {
+        formData.__editName = currentEditingName;
       }
 
       const res = await fetch(scriptURL, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(formData)
       });
 
