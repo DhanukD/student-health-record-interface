@@ -1,106 +1,659 @@
-function doPost(e) {
-  try {
-    if (!e || !e.postData || !e.postData.contents) {
-      return ContentService
-        .createTextOutput("No postData received")
-        .setMimeType(ContentService.MimeType.TEXT);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Health Data Entry System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    
-    const ss = SpreadsheetApp.openById("1m84Ukd6CGo64CIB78HLmettJ2FugEVWKRexuDdCk_3Y");
-    const sheet = ss.getSheetByName("Sheet1");
-    
-    // Get headers
-    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    const body = JSON.parse(e.postData.contents);
-    
-    console.log('Received data:', body);
-    
-    const nameToEdit = body.__editName ? body.__editName.toString().trim() : null;
-    let rowIndexToUpdate = -1;
-    
-    if (nameToEdit) {
-      console.log('Looking for existing record:', nameToEdit);
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3d 100%);
+      color: #f0f0f0;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(42, 42, 61, 0.8);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: #00d8a7;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0, 216, 167, 0.3);
+    }
+
+    .header p {
+      color: #b0b0b0;
+      font-size: 1.1rem;
+    }
+
+    .search-section {
+      background: rgba(30, 30, 47, 0.5);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(0, 216, 167, 0.2);
+    }
+
+    .search-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 2px solid #444;
+      background-color: #2a2a3d;
+      color: #f0f0f0;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #00d8a7;
+      box-shadow: 0 0 0 3px rgba(0, 216, 167, 0.2);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00d8a7 0%, #00c496 100%);
+      color: #1e1e2f;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 216, 167, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+    }
+
+    .form-section {
+      background: rgba(30, 30, 47, 0.3);
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .section-title {
+      color: #00d8a7;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(0, 216, 167, 0.3);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #e0e0e0;
+      font-size: 14px;
+    }
+
+    .required {
+      color: #ff6b6b;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 2px solid #444;
+      background-color: #2a2a3d;
+      color: #f0f0f0;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #00d8a7;
+      box-shadow: 0 0 0 3px rgba(0, 216, 167, 0.2);
+    }
+
+    .status-message {
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .status-success {
+      background: rgba(0, 216, 167, 0.2);
+      color: #00ffcc;
+      border: 1px solid rgba(0, 216, 167, 0.3);
+    }
+
+    .status-error {
+      background: rgba(255, 107, 107, 0.2);
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+
+    .status-info {
+      background: rgba(66, 165, 245, 0.2);
+      color: #42a5f5;
+      border: 1px solid rgba(66, 165, 245, 0.3);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0, 216, 167, 0.3);
+      border-radius: 50%;
+      border-top-color: #00d8a7;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
       
-      // Get all data to find existing record
-      const lastRow = sheet.getLastRow();
-      if (lastRow > 1) {
-        const nameColumn = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
-        
-        for (let i = 0; i < nameColumn.length; i++) {
-          const cellValue = nameColumn[i][0];
-          if (cellValue && cellValue.toString().trim().toLowerCase() === nameToEdit.toLowerCase()) {
-            rowIndexToUpdate = i + 2; // +2 because we start from row 2 and arrays are 0-indexed
-            console.log('Found existing record at row:', rowIndexToUpdate);
-            break;
-          }
-        }
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .search-wrapper {
+        flex-direction: column;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-actions {
+        flex-direction: column;
       }
     }
-    
-    // Prepare row data based on headers
-    const rowData = headers.map(header => {
-      return body[header] !== undefined ? body[header] : '';
-    });
-    
-    if (rowIndexToUpdate > -1) {
-      // Update existing row
-      sheet.getRange(rowIndexToUpdate, 1, 1, rowData.length).setValues([rowData]);
-      console.log('Updated existing record at row:', rowIndexToUpdate);
-      return ContentService
-        .createTextOutput("Record Updated Successfully")
-        .setMimeType(ContentService.MimeType.TEXT);
-    } else {
-      // Add new row
-      sheet.appendRow(rowData);
-      console.log('Added new record');
-      return ContentService
-        .createTextOutput("New Record Created Successfully")
-        .setMimeType(ContentService.MimeType.TEXT);
-    }
-    
-  } catch (error) {
-    console.error('Error in doPost:', error);
-    return ContentService
-      .createTextOutput("Error: " + error.toString())
-      .setMimeType(ContentService.MimeType.TEXT);
-  }
-}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Student Health Data Entry</h1>
+      <p>Comprehensive Health Management System</p>
+    </div>
 
-function doGet() {
-  try {
-    const ss = SpreadsheetApp.openById("1m84Ukd6CGo64CIB78HLmettJ2FugEVWKRexuDdCk_3Y");
-    const sheet = ss.getSheetByName("Sheet1");
-    
-    const lastRow = sheet.getLastRow();
-    if (lastRow <= 1) {
-      // No data rows, return empty array
-      return ContentService
-        .createTextOutput(JSON.stringify([]))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    const lastCol = sheet.getLastColumn();
-    const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-    const data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
-    
-    const records = data.map(row => {
-      let record = {};
-      headers.forEach((header, index) => {
-        record[header] = row[index] || '';
-      });
-      return record;
-    });
-    
-    console.log('Returning', records.length, 'records');
-    
-    return ContentService
-      .createTextOutput(JSON.stringify(records))
-      .setMimeType(ContentService.MimeType.JSON);
+    <div class="search-section">
+      <div class="search-wrapper">
+        <input 
+          id="searchBar" 
+          type="text" 
+          class="search-input"
+          placeholder="Search by student name..." 
+        />
+        <button id="searchButton" type="button" class="btn btn-primary">Search</button>
+        <button id="clearButton" type="button" class="btn btn-secondary">Clear</button>
+      </div>
+      <div id="searchStatus" class="status-message" style="display: none;"></div>
+    </div>
+
+    <form id="healthForm">
+      <div class="form-section">
+        <div class="form-group">
+          <label>Name <span class="required">*</span></label>
+          <input name="Name" required />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Basic Information</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Age</label>
+            <input name="Age" type="number" min="0" max="150"/>
+          </div>
+          <div class="form-group">
+            <label>Blood Group</label>
+            <select name="Blood Group">
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Health Measurements</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>FBS (Glucometer)</label>
+            <input name="FBS (Glucometer)" placeholder="mg/dL"/>
+          </div>
+          <div class="form-group">
+            <label>FBS (Glucose Kit)</label>
+            <input name="FBS (Glucose Kit)" placeholder="mg/dL"/>
+          </div>
+          <div class="form-group">
+            <label>Weight</label>
+            <input name="Weight" placeholder="kg"/>
+          </div>
+          <div class="form-group">
+            <label>Height</label>
+            <input name="Height" placeholder="cm"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Body Measurements</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Waist Circumference</label>
+            <input name="Waist Circumference" placeholder="cm"/>
+          </div>
+          <div class="form-group">
+            <label>Hip Circumference</label>
+            <input name="Hip Circumference" placeholder="cm"/>
+          </div>
+          <div class="form-group">
+            <label>Mid Upper Arm Circumference</label>
+            <input name="Mid Upper Arm Circumference" placeholder="cm"/>
+          </div>
+          <div class="form-group">
+            <label>Mid Upper Arm Length</label>
+            <input name="Mid Upper Arm Length" placeholder="cm"/>
+          </div>
+          <div class="form-group">
+            <label>Mid Upper Arm Skin Fold Thickness</label>
+            <input name="Mid Upper Arm Skin Fold Thickness" placeholder="mm"/>
+          </div>
+          <div class="form-group">
+            <label>Body Fat</label>
+            <input name="Body Fat" placeholder="%"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Fat Analysis</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Visceral Fat</label>
+            <input name="Visceral Fat"/>
+          </div>
+          <div class="form-group">
+            <label>Resting Metabolism</label>
+            <input name="Resting Metabolism" placeholder="kcal"/>
+          </div>
+          <div class="form-group">
+            <label>BMI</label>
+            <input name="BMI"/>
+          </div>
+          <div class="form-group">
+            <label>Body Age</label>
+            <input name="Body Age" placeholder="years"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Subcutaneous Fat Analysis</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Subcutaneous Fat (Whole)</label>
+            <input name="Subcutaneous Fat (Whole)" placeholder="%"/>
+          </div>
+          <div class="form-group">
+            <label>Subcutaneous Fat (Trunk)</label>
+            <input name="Subcutaneous Fat (Trunk)" placeholder="%"/>
+          </div>
+          <div class="form-group">
+            <label>Subcutaneous Fat (Arm)</label>
+            <input name="Subcutaneous Fat (Arm)" placeholder="%"/>
+          </div>
+          <div class="form-group">
+            <label>Subcutaneous Fat (Leg)</label>
+            <input name="Subcutaneous Fat (Leg)" placeholder="%"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Skeletal Muscle Analysis</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Skeletal Muscle (Whole)</label>
+            <input name="Skeletal Muscle (Whole)" placeholder="%"/>
+          </div>
+          <div class="form-group">
+            <label>Skeletal Muscle (Trunk)</label>
+            <input name="Skeletal Muscle (Trunk)" placeholder="%"/>
+          </div>
+          <div class="form-group">
+            <label>Skeletal Muscle (Arm)</label>
+            <input name="Skeletal Muscle (Arm)" placeholder="%"/>
+          </div>
+          <div class="form-group">
+            <label>Skeletal Muscle (Leg)</label>
+            <input name="Skeletal Muscle (Leg)" placeholder="%"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <span id="submitText">Save Record</span>
+          <span id="submitLoading" class="loading" style="display: none;"></span>
+        </button>
+      </div>
+
+      <div id="message" class="status-message" style="display: none;"></div>
+    </form>
+  </div>
+
+  <script>
+    // Replace this URL with your Google Apps Script web app URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyCWDAH_lG5U3meUH-7mwlqCJWJZi_aQAdVzpFyG9a6JZ9XirsXBMxcNo19lgy1FdDJ/exec';
+
+    // DOM elements
+    const form = document.getElementById('healthForm');
+    const searchBar = document.getElementById('searchBar');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearButton');
+    const message = document.getElementById('message');
+    const searchStatus = document.getElementById('searchStatus');
+    const submitText = document.getElementById('submitText');
+    const submitLoading = document.getElementById('submitLoading');
+
+    // Application state
+    let allData = [];
+    let currentEditingRecord = null;
+    let isLoading = false;
+
+    // Utility functions
+    function showMessage(msg, type = 'info') {
+      message.textContent = msg;
+      message.className = `status-message status-${type}`;
+      message.style.display = 'block';
       
-  } catch (error) {
-    console.error('Error in doGet:', error);
-    return ContentService
-      .createTextOutput(JSON.stringify({ error: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+      if (type === 'success') {
+        setTimeout(() => {
+          message.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    function showSearchStatus(msg, type = 'info') {
+      searchStatus.textContent = msg;
+      searchStatus.className = `status-message status-${type}`;
+      searchStatus.style.display = 'block';
+      
+      setTimeout(() => {
+        searchStatus.style.display = 'none';
+      }, 3000);
+    }
+
+    function setLoading(loading) {
+      isLoading = loading;
+      if (loading) {
+        submitText.style.display = 'none';
+        submitLoading.style.display = 'inline-block';
+        form.querySelector('button[type="submit"]').disabled = true;
+      } else {
+        submitText.style.display = 'inline';
+        submitLoading.style.display = 'none';
+        form.querySelector('button[type="submit"]').disabled = false;
+      }
+    }
+
+    // Data functions
+    async function fetchData() {
+      try {
+        console.log('Fetching data from:', scriptURL);
+        const response = await fetch(scriptURL);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        allData = Array.isArray(data) ? data : [];
+        console.log('Data fetched successfully:', allData.length, 'records');
+        
+        return true;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        showMessage('Error loading data. Please refresh the page.', 'error');
+        return false;
+      }
+    }
+
+    function fillForm(data) {
+      const fields = form.querySelectorAll("input, select");
+      fields.forEach(input => {
+        const value = data[input.name];
+        if (value !== undefined && value !== null && value !== '') {
+          input.value = value;
+        } else {
+          input.value = '';
+        }
+      });
+      console.log('Form filled with data for:', data.Name);
+    }
+
+    function clearForm() {
+      form.reset();
+      currentEditingRecord = null;
+      message.style.display = 'none';
+      console.log('Form cleared');
+    }
+
+    // Search functionality
+    async function searchStudent() {
+      const query = searchBar.value.trim();
+      
+      if (query.length === 0) {
+        showSearchStatus('Please enter a name to search', 'error');
+        return;
+      }
+
+      console.log('Searching for:', query);
+      
+      // Ensure we have fresh data
+      if (allData.length === 0) {
+        showSearchStatus('Loading data...', 'info');
+        const success = await fetchData();
+        if (!success) return;
+      }
+      
+      const result = allData.find(item => 
+        item.Name && 
+        item.Name.toString().trim().toLowerCase() === query.toLowerCase()
+      );
+      
+      if (result) {
+        currentEditingRecord = result;
+        fillForm(result);
+        showSearchStatus(`Found record for: ${result.Name}`, 'success');
+        showMessage(`Editing record for: ${result.Name}`, 'info');
+        console.log('Found and loaded record for:', result.Name);
+      } else {
+        currentEditingRecord = null;
+        clearForm();
+        document.querySelector('input[name="Name"]').value = query;
+        showSearchStatus('Student not found. Creating new record.', 'info');
+        showMessage('New student record. Fill in the details below.', 'info');
+        console.log('No record found for:', query);
+      }
+    }
+
+    // Event listeners
+    searchBar.addEventListener("keypress", (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchStudent();
+      }
+    });
+
+    searchBar.addEventListener("input", () => {
+      if (searchBar.value.trim() === '') {
+        searchStatus.style.display = 'none';
+      }
+    });
+
+    searchButton.addEventListener("click", searchStudent);
+
+    clearButton.addEventListener("click", () => {
+      clearForm();
+      searchBar.value = '';
+      searchStatus.style.display = 'none';
+    });
+
+    // Form submission
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      if (isLoading) return;
+      
+      const formData = {};
+      new FormData(form).forEach((val, key) => {
+        formData[key] = val.trim();
+      });
+
+      // Validate required fields
+      if (!formData.Name) {
+        showMessage('Name is required!', 'error');
+        return;
+      }
+
+      // Add edit identifier if updating existing record
+      if (currentEditingRecord && currentEditingRecord.Name) {
+        formData.__editName = currentEditingRecord.Name;
+        console.log('Updating existing record for:', currentEditingRecord.Name);
+      } else {
+        console.log('Creating new record for:', formData.Name);
+      }
+
+      try {
+        setLoading(true);
+        showMessage('Saving record...', 'info');
+        
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.text();
+        console.log('Server response:', result);
+        
+        if (currentEditingRecord) {
+          showMessage(`✅ Record updated successfully for ${formData.Name}!`, 'success');
+        } else {
+          showMessage(`✅ New record created successfully for ${formData.Name}!`, 'success');
+        }
+        
+        // Refresh data and clear form
+        await fetchData();
+        clearForm();
+        searchBar.value = '';
+        searchStatus.style.display = 'none';
+        
+      } catch (error) {
+        console.error('Error saving record:', error);
+        showMessage('❌ Error saving record. Please try again.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Application initialized');
+      fetchData();
+    });
+
+    // Handle page visibility changes to refresh data
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        fetchData();
+      }
+    });
+  </script>
+</body>
+</html>
