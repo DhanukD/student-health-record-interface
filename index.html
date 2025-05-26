@@ -1,134 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Health Data</title>
-  <script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script defer src="script.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Student Health Data Entry by Maduruwa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    input, select {
-      background-color: #f9fafb;
-    }
-    fieldset {
-      border: 1px solid #e5e7eb;
-      border-radius: 0.5rem;
-      padding: 1rem;
-    }
-    legend {
-      font-weight: 600;
-      color: #4f46e5;
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { padding: 10px 15px; margin-right: 10px; }
+    #message { margin-top: 20px; font-weight: bold; }
+    @media (min-width: 600px) {
+      .form-group { display: flex; align-items: center; }
+      label { width: 200px; }
+      input { flex: 1; }
     }
   </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-purple-100 min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-4xl bg-white p-6 rounded-2xl shadow-xl">
-    <h1 class="text-3xl font-bold mb-6 text-center text-indigo-700">Student Health Data</h1>
-    <div class="mb-6 flex flex-col sm:flex-row gap-4">
-      <input id="searchName" type="text" placeholder="Search by Name" class="flex-grow border p-3 rounded-lg shadow-sm" />
-      <button onclick="searchStudent()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow">Search</button>
+<body>
+  <h1>Student Health Data Entry</h1>
+  <form id="healthForm">
+    <div class="form-group">
+      <label for="Name">Name (required):</label>
+      <input type="text" id="Name" name="Name" required>
     </div>
-    <form id="healthForm" onsubmit="saveData(event)" class="grid grid-cols-1 gap-6">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input required name="Name" placeholder="Name" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Age" type="number" placeholder="Age" class="border p-3 rounded-lg shadow-sm" />
-        <select name="Blood group" class="border p-3 rounded-lg shadow-sm">
-          <option value="">Select Blood Group</option>
-          <option value="A+">A+</option>
-          <option value="A-">A-</option>
-          <option value="B+">B+</option>
-          <option value="B-">B-</option>
-          <option value="AB+">AB+</option>
-          <option value="AB-">AB-</option>
-          <option value="O+">O+</option>
-          <option value="O-">O-</option>
-        </select>
-        <input name="FBS level (glucometer)" placeholder="FBS (glucometer)" class="border p-3 rounded-lg shadow-sm" />
-        <input name="FBS level (glucose oxidase kit)" placeholder="FBS (kit)" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Weight" placeholder="Weight" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Height" placeholder="Height" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Waist circumference" placeholder="Waist circumference" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Hip circumference" placeholder="Hip circumference" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Mid upper arm circumference" placeholder="Mid upper arm circumference" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Mid upper arm length" placeholder="Mid upper arm length" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Mid upper arm skin fold thikness" placeholder="Skin fold thickness" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Body fat" placeholder="Body fat" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Visceral fat" placeholder="Visceral fat" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Resting Metabolism" placeholder="Resting Metabolism" class="border p-3 rounded-lg shadow-sm" />
-        <input name="BMI" placeholder="BMI" class="border p-3 rounded-lg shadow-sm" />
-        <input name="Body age" placeholder="Body age" class="border p-3 rounded-lg shadow-sm" />
-      </div>
+    <div class="form-group"><label for="Age">Age:</label><input type="number" id="Age" name="Age"></div>
+    <div class="form-group"><label for="Blood group">Blood group:</label><input type="text" id="Blood group" name="Blood group"></div>
+    <div class="form-group"><label for="FBS level (glucometer)">FBS level (glucometer):</label><input type="number" id="FBS level (glucometer)" name="FBS level (glucometer)"></div>
+    <div class="form-group"><label for="FBS level (glucose oxidase kit)">FBS level (glucose oxidase kit):</label><input type="number" id="FBS level (glucose oxidase kit)" name="FBS level (glucose oxidase kit)"></div>
+    <div class="form-group"><label for="Weight">Weight:</label><input type="number" id="Weight" name="Weight"></div>
+    <div class="form-group"><label for="Height">Height:</label><input type="number" id="Height" name="Height"></div>
+    <div class="form-group"><label for="Waist circumference">Waist circumference:</label><input type="number" id="Waist circumference" name="Waist circumference"></div>
+    <div class="form-group"><label for="Hip circumference">Hip circumference:</label><input type="number" id="Hip circumference" name="Hip circumference"></div>
+    <div class="form-group"><label for="Mid upper arm circumference">Mid upper arm circumference:</label><input type="number" id="Mid upper arm circumference" name="Mid upper arm circumference"></div>
+    <div class="form-group"><label for="Mid upper arm length">Mid upper arm length:</label><input type="number" id="Mid upper arm length" name="Mid upper arm length"></div>
+    <div class="form-group"><label for="Mid upper arm skin fold thickness">Mid upper arm skin fold thickness:</label><input type="number" id="Mid upper arm skin fold thickness" name="Mid upper arm skin fold thickness"></div>
+    <div class="form-group"><label for="Body fat">Body fat:</label><input type="number" id="Body fat" name="Body fat"></div>
+    <div class="form-group"><label for="Visceral fat">Visceral fat:</label><input type="number" id="Visceral fat" name="Visceral fat"></div>
+    <div class="form-group"><label for="Resting Metabolism">Resting Metabolism:</label><input type="number" id="Resting Metabolism" name="Resting Metabolism"></div>
+    <div class="form-group"><label for="BMI">BMI:</label><input type="number" id="BMI" name="BMI"></div>
+    <div class="form-group"><label for="Body age">Body age:</label><input type="number" id="Body age" name="Body age"></div>
+    <div class="form-group"><label for="Subcutaneous fat whole body">Subcutaneous fat whole body:</label><input type="number" id="Subcutaneous fat whole body" name="Subcutaneous fat whole body"></div>
+    <div class="form-group"><label for="Subcutaneous fat trunk">Subcutaneous fat trunk:</label><input type="number" id="Subcutaneous fat trunk" name="Subcutaneous fat trunk"></div>
+    <div class="form-group"><label for="Subcutaneous fat Arm">Subcutaneous fat Arm:</label><input type="number" id="Subcutaneous fat Arm" name="Subcutaneous fat Arm"></div>
+    <div class="form-group"><label for="Subcutaneous fat leg">Subcutaneous fat leg:</label><input type="number" id="Subcutaneous fat leg" name="Subcutaneous fat leg"></div>
+    <div class="form-group"><label for="Skeletal muscle fat whole body">Skeletal muscle fat whole body:</label><input type="number" id="Skeletal muscle fat whole body" name="Skeletal muscle fat whole body"></div>
+    <div class="form-group"><label for="Skeletal muscle trunk">Skeletal muscle trunk:</label><input type="number" id="Skeletal muscle trunk" name="Skeletal muscle trunk"></div>
+    <div class="form-group"><label for="Skeletal muscle arm">Skeletal muscle arm:</label><input type="number" id="Skeletal muscle arm" name="Skeletal muscle arm"></div>
+    <div class="form-group"><label for="Skeletal muscle leg">Skeletal muscle leg:</label><input type="number" id="Skeletal muscle leg" name="Skeletal muscle leg"></div>
 
-      <fieldset>
-        <legend>Subcutaneous Fat</legend>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-          <input name="Subcutaneous fat whole body" placeholder="Whole body" class="border p-3 rounded-lg shadow-sm" />
-          <input name="Subcutaneous fat trunk" placeholder="Trunk" class="border p-3 rounded-lg shadow-sm" />
-          <input name="Subcutaneous fat Arm" placeholder="Arm" class="border p-3 rounded-lg shadow-sm" />
-          <input name="Subcutaneous fat leg" placeholder="Leg" class="border p-3 rounded-lg shadow-sm" />
-        </div>
-      </fieldset>
+    <button type="submit">Save</button>
+    <button type="button" id="searchButton">Search</button>
+  </form>
 
-      <fieldset>
-        <legend>Skeletal Muscle</legend>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-          <input name="Skeletal muscle fat whole body" placeholder="Whole body" class="border p-3 rounded-lg shadow-sm" />
-          <input name="Skeletal muscle trunk" placeholder="Trunk" class="border p-3 rounded-lg shadow-sm" />
-          <input name="Skeletal muscle arm" placeholder="Arm" class="border p-3 rounded-lg shadow-sm" />
-          <input name="Skeletal muscle leg" placeholder="Leg" class="border p-3 rounded-lg shadow-sm" />
-        </div>
-      </fieldset>
-
-      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg shadow">Save</button>
-    </form>
-    <p id="status" class="text-center mt-6 text-green-700 font-medium"></p>
-  </div>
+  <div id="message"></div>
 
   <script>
-    const scriptURL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxtdx8YsdqAUHGKiHsmJ047vfDGJmOlPVSSlJP7p9rA98YaaaYiQCsC31KCt5BBCGuK/exec';
 
-    function getFormData() {
-      const form = document.forms['healthForm'];
-      const formData = {};
-      for (let el of form.elements) {
-        if (el.name) formData[el.name] = el.value;
+    document.getElementById('healthForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((value, key) => { data[key] = value; });
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.text())
+      .then(text => {
+        document.getElementById('message').innerText = text;
+      })
+      .catch(error => {
+        document.getElementById('message').innerText = 'Error: ' + error.message;
+      });
+    });
+
+    document.getElementById('searchButton').addEventListener('click', function() {
+      const name = document.getElementById('Name').value;
+      if (!name) {
+        alert('Please enter a name to search.');
+        return;
       }
-      return formData;
-    }
-
-    function fillForm(data) {
-      const form = document.forms['healthForm'];
-      for (let key in data) {
-        if (form[key]) form[key].value = data[key];
-      }
-    }
-
-    function searchStudent() {
-      const name = document.getElementById('searchName').value.trim();
-      if (!name) return alert('Enter a name to search.');
-      axios.get(`${scriptURL}?action=search&name=${encodeURIComponent(name)}`)
-        .then(res => {
-          if (res.data.success) {
-            fillForm(res.data.data);
-            document.getElementById('status').textContent = 'Data loaded.';
-          } else {
-            document.getElementById('status').textContent = 'Student not found.';
+      fetch(`${scriptURL}?name=${encodeURIComponent(name)}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data && !data.error) {
+          for (const key in data) {
+            if (document.getElementById(key)) {
+              document.getElementById(key).value = data[key];
+            }
           }
-        });
-    }
-
-    function saveData(event) {
-      event.preventDefault();
-      const data = getFormData();
-      axios.post(scriptURL, { action: 'save', data })
-        .then(res => {
-          document.getElementById('status').textContent = res.data.message;
-        });
-    }
+          document.getElementById('message').innerText = '✅ Record loaded.';
+        } else {
+          document.getElementById('message').innerText = data.error || '❌ No record found.';
+        }
+      })
+      .catch(error => {
+        document.getElementById('message').innerText = 'Error: ' + error.message;
+      });
+    });
   </script>
 </body>
 </html>
